@@ -1,38 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using API.Data;
-using API.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using API.Interfaces;
+using AutoMapper;
+using API.DTOs;
 
 namespace API.Controllers
 {
    [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context; // how you gain access to the dB
-        public UsersController(DataContext context)
+        
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _mapper = mapper;
+            _userRepository = userRepository;
+
         }
 
          //getting two end points, or two users
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() //returns a simple list with no extended functionality
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers() //returns a simple list with no extended functionality
         {
-            return await _context.Users.ToListAsync(); //get users from a database aysnchronously into a list, it awaits after making a query
+           var users = await _userRepository.GetMemberAsync();
+   
+           return Ok(users);
   
         }
         //you make it async to handle multiple inquiries/users
-        //api/users/3  specific user
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id) //returns a user
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDto>> GetUser(string username) //returns a user
         {
-          return await _context.Users.FindAsync(id); //get users from a database into a list
+          return await _userRepository.GetMemberAsync(username);// getting user from repository
+
 
         }
     }

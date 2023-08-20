@@ -1,5 +1,14 @@
 {
   "dependencies": {
-    "ngx-toastr": "^13.2.1"
+    "@angular/cdk": "^12.2.13",
+    "@kolkov/ngx-gallery": "^2.0.1",
+    "@microsoft/signalr": "^7.0.10",
+    "ng2-file-upload": "^5.0.0",
+    "ngx-bootstrap": "^11.0.2",
+    "ngx-spinner": "^16.0.2",
+    "ngx-timeago": "^3.0.0",
+    "ngx-toastr": "^15.2.2",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.1"
   }
 }
