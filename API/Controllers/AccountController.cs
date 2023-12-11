@@ -47,10 +47,9 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = tokenService.CreateToken(user),
-                KnownAs = user.KnownAs
+                KnownAs = user.KnownAs,
+                Gender = user.Gender
             };
-            
-
         }
 
         [HttpPost("login")]
@@ -72,12 +71,13 @@ namespace API.Controllers
                 if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("invalide password");
             }
 
-            return new UserDto
+            return new UserDto //properties returned when a user signs in
             {
                 Username = user.UserName,
                 Token = tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
-                KnownAs = user.KnownAs
+                KnownAs = user.KnownAs,
+                Gender = user.Gender
             };
         }
         private async Task<bool> UserExists(string username)

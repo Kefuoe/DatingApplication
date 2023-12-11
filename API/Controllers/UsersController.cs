@@ -6,6 +6,7 @@ using API.DTOs;
 using System.Security.Claims;
 using API.Extensions;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -28,11 +29,22 @@ namespace API.Controllers
 
          //getting two end points, or two users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers() //returns a simple list with no extended functionality
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams) //returns a simple list with no extended functionality
         {
-           var users = await _userRepository.GetMemberAsync();
+            var curentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            userParams.CurrentUsername = curentUser.UserName;
+
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = curentUser.Gender == "male" ? "female" : "male";
+            }
+
+            var users = await _userRepository.GetMemberAsync(userParams);
+
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrrentPage, users.PageSize, 
+               users.TotalCount, users.TotalPages));
    
-           return Ok(users);
+            return Ok(users);
   
         }
         //you make it async to handle multiple inquiries/users
